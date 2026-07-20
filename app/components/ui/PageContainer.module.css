@@ -1,0 +1,24 @@
+.container {
+  min-height: 100vh;
+  width: 100%;
+  padding: 56px 24px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  background:
+    radial-gradient(circle at top right, rgba(184, 150, 62, 0.08), transparent 28%),
+    radial-gradient(circle at bottom left, rgba(255, 255, 255, 0.04), transparent 30%),
+    linear-gradient(180deg, var(--preto-santos) 0%, var(--carvao) 100%);
+}
+
+.normal {
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.wide {
+  width: 100%;
+  max-width: 1300px;
+  margin: 0 auto;
+}

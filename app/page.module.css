@@ -1,0 +1,72 @@
+.home {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .hero {
+    text-align: center;
+    margin-bottom: 48px;
+  }
+  
+  .logo {
+    width: 90px;
+    height: 90px;
+    margin: 0 auto 24px;
+    object-fit: contain;
+  }
+  
+  .title {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 800;
+    color: white;
+    margin-bottom: 12px;
+  }
+  
+  .subtitle {
+    font-size: 1.1rem;
+    color: rgba(255,255,255,.75);
+    max-width: 650px;
+    margin: auto;
+  }
+  
+  .cards{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+    gap:28px;
+    margin-top:50px;
+  }
+  
+  .cardContent{
+    display:flex;
+    flex-direction:column;
+    gap:18px;
+    text-align:center;
+  }
+  
+  .icon{
+    color:#d4af37;
+  }
+  
+  .cardTitle{
+    font-size:1.5rem;
+    font-weight:700;
+    color:white;
+  }
+  
+  .cardText{
+    color:rgba(255,255,255,.75);
+    line-height:1.7;
+  }
+  
+  .info{
+    margin-top:60px;
+    text-align:center;
+    color:rgba(255,255,255,.7);
+    font-size:.95rem;
+  }
+  
+  .info p{
+    margin-top:8px;
+  }

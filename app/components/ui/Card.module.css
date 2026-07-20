@@ -1,0 +1,25 @@
+.card {
+    position: relative;
+    width: 100%;
+    padding: 32px;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(12px);
+    transition: 0.3s ease;
+    overflow: hidden;
+  }
+  
+  .card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at top right, rgba(184, 150, 62, 0.1), transparent 35%);
+    pointer-events: none;
+  }
+  
+  .hover:hover {
+    transform: translateY(-6px);
+    border-color: rgba(184, 150, 62, 0.3);
+    box-shadow: 0 16px 50px rgba(0, 0, 0, 0.35);
+  }
