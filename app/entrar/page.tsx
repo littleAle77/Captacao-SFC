@@ -107,6 +107,20 @@ export default function Entrar() {
             <Button onClick={entrar} disabled={validando}>
               {validando ? 'VERIFICANDO...' : 'ENTRAR'}
             </Button>
+
+            <div style={{ marginTop: 16, textAlign: 'center' }}>
+  <Link
+    href="/definir-senha"
+    style={{
+      color: 'var(--dourado)',
+      textDecoration: 'none',
+      fontSize: 14,
+      fontWeight: 600,
+    }}
+  >
+    Primeiro acesso
+  </Link>
+</div>
           </Card>
         </div>
       </PageContainer>
