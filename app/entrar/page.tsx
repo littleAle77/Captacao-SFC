@@ -1,19 +1,19 @@
 'use client'
 
 import { useState } from 'react'
-import Link from 'next/link'
 import bcrypt from 'bcryptjs'
 import { supabase } from '../lib/supabase'
 import Cabecalho from '../components/Cabecalho'
 import PageContainer from '../components/ui/PageContainer'
 import Card from '../components/ui/Card'
 import Button from '../components/ui/Button'
+import { useRouter } from 'next/navigation'
 
 export default function Entrar() {
   const [senha, setSenha] = useState('')
   const [erro, setErro] = useState('')
+  const router = useRouter()
   const [validando, setValidando] = useState(false)
-  const [areasLiberadas, setAreasLiberadas] = useState<string[] | null>(null)
 
   function registrarAtividade() {
     localStorage.setItem('sessao_atividade', String(Date.now()))
@@ -52,33 +52,11 @@ export default function Entrar() {
 
     localStorage.setItem('sessao_areas', JSON.stringify(encontrado.areas))
     registrarAtividade()
-    setAreasLiberadas(encontrado.areas)
-  }
+    
+    sessionStorage.setItem('sessao_liberada', 'true')
+    
+    window.location.href = '/'  }
 
-  if (areasLiberadas) {
-    return (
-      <>
-        <Cabecalho />
-        <PageContainer>
-          <div style={{ maxWidth: 420, margin: '0 auto', width: '100%' }}>
-            <Card>
-              <h1 style={{ fontFamily: 'var(--fonte-titulo)', fontSize: 24, color: 'var(--branco)', marginBottom: 24 }}>
-                Escolha o painel
-              </h1>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-                {areasLiberadas.includes('seletiva') && (
-                  <Link href="/admin"><Button>PAINEL SELETIVA</Button></Link>
-                )}
-                {areasLiberadas.includes('mercado') && (
-                  <Link href="/admin/mercado"><Button>PAINEL MERCADO</Button></Link>
-                )}
-              </div>
-            </Card>
-          </div>
-        </PageContainer>
-      </>
-    )
-  }
 
   return (
     <>
@@ -108,19 +86,12 @@ export default function Entrar() {
               {validando ? 'VERIFICANDO...' : 'ENTRAR'}
             </Button>
 
-            <div style={{ marginTop: 16, textAlign: 'center' }}>
-  <Link
-    href="/definir-senha"
-    style={{
-      color: 'var(--dourado)',
-      textDecoration: 'none',
-      fontSize: 14,
-      fontWeight: 600,
-    }}
-  >
-    Primeiro acesso
-  </Link>
-</div>
+            <div style={{ marginTop: 12 }}>
+             <Button onClick={() => router.push('/definir-senha')}>
+                    PRIMEIRO ACESSO
+             </Button>
+            </div>
+            
           </Card>
         </div>
       </PageContainer>

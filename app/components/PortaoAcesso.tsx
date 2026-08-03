@@ -35,21 +35,31 @@ export default function PortaoAcesso({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     async function verificarInicial() {
-      const salva = sessionStorage.getItem('chave_geral_valor')
-      const registro = salva ? await buscarChave(salva) : null
-      if (registro) {
+      const sessao = sessionStorage.getItem('sessao_liberada')
+
+      if (sessao === 'true') {
         setLiberado(true)
-        redirecionarSeNecessario(registro.destino)
+        setVerificando(false)
+        return
       }
+
+        const salva = sessionStorage.getItem('chave_geral_valor')
+        const registro = salva ? await buscarChave(salva) : null
+
+        if (registro) {
+          setLiberado(true)
+          redirecionarSeNecessario(registro.destino)
+        }
       setVerificando(false)
     }
     verificarInicial()
   }, [])
 
   useEffect(() => {
-    if (!liberado) return
+    if (!liberado || localStorage.getItem('sessao_areas')) return
     const intervalo = setInterval(async () => {
       const salva = sessionStorage.getItem('chave_geral_valor')
+      if (salva === '__LOGIN__') return
       const registro = await buscarChave(salva || '')
       if (!registro) {
         sessionStorage.removeItem('chave_geral_valor')
@@ -67,11 +77,16 @@ export default function PortaoAcesso({ children }: { children: ReactNode }) {
     setValidando(false)
     if (!registro) { setErro('Chave de acesso inválida.'); return }
     sessionStorage.setItem('chave_geral_valor', chave.trim())
+    sessionStorage.setItem('sessao_liberada', 'true')
     setLiberado(true)
     redirecionarSeNecessario(registro.destino)
   }
 
   if (verificando) return null
+
+  if (pathname === '/entrar' || pathname === '/definir-senha') {
+    return <>{children}</>
+  }
 
   if (!liberado) {
     return (
@@ -114,7 +129,16 @@ export default function PortaoAcesso({ children }: { children: ReactNode }) {
           <button onClick={entrar} disabled={validando} className="btn-primary">
             {validando ? 'VERIFICANDO...' : 'ENTRAR'}
           </button>
+
+          <button
+              onClick={() => router.push('/entrar')}
+              className="btn-primary"
+              style={{ marginTop: 12 }}
+            >
+              FAZER LOGIN
+            </button>
         </div>
+
       </main>
     )
   }

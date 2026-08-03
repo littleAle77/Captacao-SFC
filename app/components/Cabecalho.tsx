@@ -56,8 +56,8 @@ export default function Cabecalho() {
         {areas.length > 0 ? (
           <>
             {areas.includes('seletiva') && <Link href="/admin" style={linkStyle}>PAINEL SELETIVA</Link>}
-            {areas.includes('mercado') && <Link href="/admin/mercado" style={linkStyle}>PAINEL MATERIAIS</Link>}
-            {areas.includes('seletiva') && <Link href="/gerenciar-chave" style={linkStyle}>CHAVES DE ACESSO</Link>}
+            {areas.includes('mercado') && <Link href="/admin/mercado" style={linkStyle}>PAINEL MERCADO</Link>}
+            {areas.includes('chaves') && <Link href="/gerenciar-chave" style={linkStyle}>CHAVES DE ACESSO</Link>}
             {areas.includes('especial') && <Link href="/admin/especial" style={linkStyle}>AVALIAÇÃO C/ GRUPO</Link>}
             <Link href="/trocar-senha" style={linkStyle}>TROCAR SENHA</Link>
             <button
@@ -69,7 +69,7 @@ export default function Cabecalho() {
           </>
         ) : (
           <Link href="/entrar" style={{ ...linkStyle, opacity: 0.5, fontSize: 12 }}>
-            ÁREA RESTRITA
+            FAZER LOGIN
           </Link>
         )}
       </nav>

@@ -102,10 +102,6 @@ export default function Home() {
         </p>
 
         <p>
-          • O envio de material fica disponível durante todo o ano.
-        </p>
-
-        <p>
           • O envio de material não garante convocação.
         </p>
 

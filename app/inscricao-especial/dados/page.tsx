@@ -79,6 +79,30 @@ export default function Dados() {
 
     setCarregando(true)
     setErro('')
+
+    // Verifica se já existe uma inscrição com o mesmo nome nos últimos 6 meses
+    const seisMesesAtras = new Date()
+    seisMesesAtras.setMonth(seisMesesAtras.getMonth() - 6)
+
+    const { data: duplicados, error: erroBusca } = await supabase
+      .from('atletas')
+      .select('id, criado_em')
+      .eq('tipo_inscricao', 'padrao')
+      .ilike('nome', nome.trim())
+      .gte('criado_em', seisMesesAtras.toISOString())
+
+    if (erroBusca) {
+      setCarregando(false)
+      setErro('Erro ao verificar inscrições anteriores. Tente novamente.')
+      return
+    }
+
+    if (duplicados && duplicados.length > 0) {
+      setCarregando(false)
+      setErro('Já existe uma inscrição com este nome nos últimos 6 meses. Entre em contato com o clube caso isso seja um engano.')
+      return
+    }
+
     const dataNascimento = sessionStorage.getItem('data_nascimento')
 
     const { data, error } = await supabase

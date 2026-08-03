@@ -145,7 +145,7 @@ function GerenciarChaveConteudo() {
 
 export default function GerenciarChave() {
   return (
-    <ProtegerAcesso area="seletiva">
+    <ProtegerAcesso area="chaves">
       <GerenciarChaveConteudo />
     </ProtegerAcesso>
   )
