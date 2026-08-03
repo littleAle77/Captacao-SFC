@@ -124,26 +124,6 @@ export default function Documentos() {
         return { sucesso: true, semana }
       }
     }
-    return { sucesso: false, motivo: `Todas as semanas disponíveis para a categoria Sub-${categoria} estão lotadas.` }
-  }
-
-    for (const semana of semanas) {
-      const { count } = await supabase
-        .from('agendamentos')
-        .select('*', { count: 'exact', head: true })
-        .eq('semana_avaliacao_id', semana.id)
-
-      if ((count || 0) < semana.vagas_totais) {
-        const { error: erroAgendamento } = await supabase.from('agendamentos').insert({
-          atleta_id: atletaId,
-          semana_avaliacao_id: semana.id,
-          data: semana.data_inicio,
-          status: 'confirmado',
-        })
-        if (erroAgendamento) return { sucesso: false, motivo: erroAgendamento.message }
-        return { sucesso: true, semana }
-      }
-    }
     return { sucesso: false, motivo: 'Todas as semanas disponíveis estão lotadas.' }
   }
 
