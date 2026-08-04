@@ -8,7 +8,7 @@ import Button from '../../components/ui/Button'
 
 export default function MenorDeIdadeEspecial() {
   const router = useRouter()
-  const linkModelo = 'COLE_O_LINK_AQUI'
+  const linkModelo = 'https://rhvtkntqdglrlmlwgqjd.supabase.co/storage/v1/object/public/documentos-modelo/Termo%20de%20Responsabilidade%20Menor%20de%20Idade%20-%20Santos%20Futebol%20Clube%20v2.pdf'
 
   return (
     <>

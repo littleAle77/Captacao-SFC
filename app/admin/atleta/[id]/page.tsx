@@ -9,6 +9,7 @@ import PageContainer from '../../../components/ui/PageContainer'
 import Card from '../../../components/ui/Card'
 
 type Atleta = {
+  avaliado: boolean
   id: string
   nome: string
   telefone: string

@@ -10,6 +10,7 @@ import PageContainer from '../components/ui/PageContainer'
 type Atleta = {
   id: string
   nome: string
+  avaliado: boolean
   telefone: string
   data_nascimento: string
   posicao: string
@@ -45,6 +46,29 @@ function AdminConteudo() {
     setSemanas(semanasData || [])
     setAgendamentos(agendamentosData || [])
     setCarregando(false)
+  }
+
+  async function alternarAvaliado(
+    e: React.MouseEvent,
+    atletaId: string,
+    valorAtual: boolean
+  ) {
+    e.stopPropagation()
+  
+    const { error } = await supabase
+      .from('atletas')
+      .update({ avaliado: !valorAtual })
+      .eq('id', atletaId)
+  
+    if (!error) {
+      setAtletas((lista) =>
+        lista.map((a) =>
+          a.id === atletaId
+            ? { ...a, avaliado: !valorAtual }
+            : a
+        )
+      )
+    }
   }
 
   function calcularCategoria(dataNascimento: string) {
@@ -150,6 +174,7 @@ function AdminConteudo() {
                 <th style={{ padding: 12, color: 'rgba(255,255,255,0.5)', fontSize: 13 }}>Categoria</th>
                 <th style={{ padding: 12, color: 'rgba(255,255,255,0.5)', fontSize: 13 }}>Posição</th>
                 <th style={{ padding: 12, color: 'rgba(255,255,255,0.5)', fontSize: 13 }}>Status</th>
+                <th style={{padding: 12,  color: 'rgba(255,255,255,0.5)',fontSize: 13}}>Avaliado</th>
                 <th style={{ padding: 12, color: 'rgba(255,255,255,0.5)', fontSize: 13 }}>Data do agendamento</th>
               </tr>
             </thead>
@@ -179,6 +204,20 @@ function AdminConteudo() {
                         {atleta.status_triagem === 'apto' ? 'Apto' : 'Pendente'}
                       </span>
                     </td>
+                    <td style={{ padding: 12 }}><button onClick={(e) =>alternarAvaliado(e, atleta.id, atleta.avaliado)}
+                        style={{
+                        background: atleta.avaliado ? '#16a34a' : '#dc2626',
+                        color: '#fff',
+                        border: 'none',
+                        borderRadius: 8,
+                        padding: '6px 12px',
+                        cursor: 'pointer',
+                        fontWeight: 600
+                      }}
+                    >
+    {atleta.avaliado ? 'SIM' : 'NÃO'}
+  </button>
+</td>
                     <td style={{ padding: 12, color: 'rgba(255,255,255,0.8)' }}>
                       {semana ? `${formatarData(semana.data_inicio)} a ${formatarData(semana.data_fim)}` : '—'}
                     </td>
