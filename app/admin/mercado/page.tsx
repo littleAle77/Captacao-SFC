@@ -32,6 +32,7 @@ function AdminMercadoConteudo() {
       .from('captacao_mercado')
       .select('id, nome, data_nascimento, posicao, clube_atual, classificacao, criado_em')
       .order('criado_em', { ascending: false })
+      .eq ('tipo_inscricao', 'mercado')
     setEnvios(data || [])
     setCarregando(false)
   }

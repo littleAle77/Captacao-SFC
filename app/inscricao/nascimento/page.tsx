@@ -12,6 +12,7 @@ export default function Inscricao() {
   const [sugerirMercado, setSugerirMercado] = useState(false)
   const router = useRouter()
 
+
   function calcularCategoria(data: string) {
     const anoNascimento = new Date(data).getFullYear()
     const anoAtual = new Date().getFullYear()
@@ -60,6 +61,7 @@ export default function Inscricao() {
       router.push('/inscricao/dados')
     }
   }
+
 
   return (
     <>

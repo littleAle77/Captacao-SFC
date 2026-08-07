@@ -29,6 +29,7 @@ function AdminEspecialConteudo() {
       .from('atletas')
       .select('id, nome, telefone, data_nascimento, posicao, status_triagem')
       .eq('tipo_inscricao', 'especial')
+      .not('status_triagem', 'is', null)
       .order('criado_em', { ascending: false })
     setAtletas(data || [])
     setCarregando(false)

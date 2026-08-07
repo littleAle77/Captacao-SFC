@@ -118,6 +118,7 @@ export default function Dados() {
         indicador_interno_contato: indicadorInternoContato,
         cidade_natal: cidadeNatal, estado_natal: estadoNatal,
         cidade_atual: cidadeAtual, estado_atual: estadoAtual,
+        tipo_inscricao: 'padrao',
       })
       .select()
       .single()

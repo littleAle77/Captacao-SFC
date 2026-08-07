@@ -29,6 +29,7 @@ type Atleta = {
   estado_atual: string
   status_triagem: string
   pendencias: string | null
+  tipo_inscricao: string
 }
 
 type DocumentoEnviado = {
@@ -36,7 +37,9 @@ type DocumentoEnviado = {
   arquivo_url: string
   data_validade: string | null
   status: string
-  documentos_exigidos: { nome: string }
+  documentos_exigidos: {
+    nome: string
+  }[]
 }
 
 function FichaAtletaConteudo() {
@@ -53,17 +56,40 @@ function FichaAtletaConteudo() {
   async function carregarFicha() {
     const { data: atletaData } = await supabase.from('atletas').select('*').eq('id', id).single()
     const { data: documentosData } = await supabase
-      .from('documentos_enviados')
-      .select('id, arquivo_url, data_validade, status, documentos_exigidos(nome)')
-      .eq('atleta_id', id)
+  .from('documentos_enviados')
+  .select(`
+    id,
+    arquivo_url,
+    data_validade,
+    status,
+    criado_em,
+    documentos_exigidos!inner(nome)
+  `)
+  .eq('atleta_id', id)
+  .order('criado_em', { ascending: false })
     const { data: agendamentoData } = await supabase
       .from('agendamentos')
       .select('semanas_avaliacao(data_inicio, data_fim)')
       .eq('atleta_id', id)
       .maybeSingle()
 
-    setAtleta(atletaData)
-    setDocumentos((documentosData as any) || [])
+      setAtleta(atletaData)
+
+      const documentosUnicos: DocumentoEnviado[] = []
+      const nomes = new Set<string>()
+      
+      for (const doc of (documentosData as DocumentoEnviado[]) || []) {
+        const nome = doc.documentos_exigidos[0]?.nome
+      
+        if (!nome) continue
+      
+        if (!nomes.has(nome)) {
+          nomes.add(nome)
+          documentosUnicos.push(doc)
+        }
+      }
+      
+      setDocumentos(documentosUnicos)
     if (agendamentoData?.semanas_avaliacao) setSemana(agendamentoData.semanas_avaliacao as any)
     setCarregando(false)
   }
@@ -136,8 +162,8 @@ function FichaAtletaConteudo() {
       <Cabecalho />
       <PageContainer>
         <div style={{ maxWidth: 800, margin: '0 auto', width: '100%' }}>
-          <button
-            onClick={() => router.push('/admin')}
+        <button
+            onClick={() => router.push(atleta.tipo_inscricao === 'especial' ? '/admin/especial' : '/admin')}
             style={{ marginBottom: 20, background: 'none', border: 'none', color: 'var(--dourado-claro)', cursor: 'pointer', fontSize: 14 }}
           >
             ← Voltar para a lista
@@ -188,12 +214,14 @@ function FichaAtletaConteudo() {
               <Campo label="Estado atual" valor={atleta.estado_atual} />
             </Secao>
 
-            <Secao titulo="Inscrição">
-              <Campo
-                label="Semana de avaliação"
-                valor={semana ? `${formatarData(semana.data_inicio)} a ${formatarData(semana.data_fim)}` : 'Não agendado'}
-              />
-            </Secao>
+            {atleta.tipo_inscricao !== 'especial' && (
+              <Secao titulo="Inscrição">
+                <Campo
+                  label="Semana de avaliação"
+                  valor={semana ? `${formatarData(semana.data_inicio)} a ${formatarData(semana.data_fim)}` : 'Não agendado'}
+                />
+              </Secao>
+            )}
 
             {atleta.pendencias && (
               <div style={{ marginBottom: 28 }}>
@@ -230,7 +258,7 @@ function FichaAtletaConteudo() {
                     }}
                   >
                     <div>
-                      <p style={{ fontWeight: 600, color: 'var(--branco)' }}>{doc.documentos_exigidos?.nome}</p>
+                      <p style={{ fontWeight: 600, color: 'var(--branco)' }}>{doc.documentos_exigidos[0]?.nome}</p>
                       {doc.data_validade && (
                         <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.5)' }}>Emitido em: {formatarData(doc.data_validade)}</p>
                       )}

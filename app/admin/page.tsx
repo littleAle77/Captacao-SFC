@@ -38,7 +38,12 @@ function AdminConteudo() {
 
   async function carregarDados() {
     setCarregando(true)
-    const { data: atletasData } = await supabase.from('atletas').select('*').order('criado_em', { ascending: false })
+    const { data: atletasData } = await supabase
+    .from('atletas')
+    .select('*')
+    .order('criado_em', { ascending: false })
+    .eq('tipo_inscricao', 'padrao')
+    .not('status_triagem', 'is', null)
     const { data: semanasData } = await supabase.from('semanas_avaliacao').select('*').order('data_inicio', { ascending: true })
     const { data: agendamentosData } = await supabase.from('agendamentos').select('atleta_id, semana_avaliacao_id')
 

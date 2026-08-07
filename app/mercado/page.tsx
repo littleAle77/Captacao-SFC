@@ -56,6 +56,7 @@ export default function Mercado() {
       jogos_selecao: jogosSelecao === 'sim',
       jogos_profissional: jogosProfissional === 'sim',
       link_ogol: linkOgol,
+      tipo_inscricao: 'mercado',
     })
 
     setEnviando(false)
