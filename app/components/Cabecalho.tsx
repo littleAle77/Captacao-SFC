@@ -69,7 +69,7 @@ export default function Cabecalho() {
           </>
         ) : (
           <Link href="/entrar" style={{ ...linkStyle, opacity: 0.5, fontSize: 12 }}>
-            FAZER LOGIN
+            ÁREA DO ADMINISTRADOR
           </Link>
         )}
       </nav>

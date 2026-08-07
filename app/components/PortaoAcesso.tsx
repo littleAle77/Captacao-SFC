@@ -135,7 +135,7 @@ export default function PortaoAcesso({ children }: { children: ReactNode }) {
               className="btn-primary"
               style={{ marginTop: 12 }}
             >
-              FAZER LOGIN
+              ÁREA DO ADMINISTRADOR 
             </button>
         </div>
 

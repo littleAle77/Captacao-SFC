@@ -65,7 +65,7 @@ export default function Entrar() {
         <div style={{ maxWidth: 400, margin: '0 auto', width: '100%' }}>
           <Card>
             <h1 style={{ fontFamily: 'var(--fonte-titulo)', fontSize: 24, color: 'var(--branco)', marginBottom: 8 }}>
-              Área restrita
+              Bem-vindo Administrador
             </h1>
             <p style={{ color: 'rgba(255,255,255,0.6)', marginBottom: 24 }}>
               Digite sua senha de acesso.
