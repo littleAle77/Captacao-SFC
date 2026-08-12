@@ -37,9 +37,10 @@ type DocumentoEnviado = {
   arquivo_url: string
   data_validade: string | null
   status: string
-  documentos_exigidos: {
+  documento_exigido_id: string
+  documentos_exigidos?: {
     nome: string
-  }[]
+  } | null
 }
 
 function FichaAtletaConteudo() {
@@ -54,43 +55,70 @@ function FichaAtletaConteudo() {
   useEffect(() => { carregarFicha() }, [id])
 
   async function carregarFicha() {
-    const { data: atletaData } = await supabase.from('atletas').select('*').eq('id', id).single()
-    const { data: documentosData } = await supabase
-  .from('documentos_enviados')
-  .select(`
-    id,
-    arquivo_url,
-    data_validade,
-    status,
-    criado_em,
-    documentos_exigidos!inner(nome)
-  `)
-  .eq('atleta_id', id)
-  .order('criado_em', { ascending: false })
+    const { data: atletaData } = await supabase
+      .from('atletas')
+      .select('*')
+      .eq('id', id)
+      .single()
+  
+    const { data: documentosData, error: documentosError } = await supabase
+      .from('documentos_enviados')
+      .select(`
+        id,
+        arquivo_url,
+        data_validade,
+        status,
+        documento_exigido_id,
+        documentos_exigidos (
+          nome
+        )
+      `)
+      .eq('atleta_id', id)
+      .order('criado_em', { ascending: false })
+  
+    console.log('DOCUMENTOS DO ATLETA:', documentosData)
+    console.log('ERRO DOCUMENTOS:', documentosError)
+  
     const { data: agendamentoData } = await supabase
       .from('agendamentos')
       .select('semanas_avaliacao(data_inicio, data_fim)')
       .eq('atleta_id', id)
       .maybeSingle()
-
-      setAtleta(atletaData)
-
-      const documentosUnicos: DocumentoEnviado[] = []
-      const nomes = new Set<string>()
-      
-      for (const doc of (documentosData as DocumentoEnviado[]) || []) {
-        const nome = doc.documentos_exigidos[0]?.nome
-      
-        if (!nome) continue
-      
-        if (!nomes.has(nome)) {
-          nomes.add(nome)
-          documentosUnicos.push(doc)
-        }
+  
+    setAtleta(atletaData)
+  
+    const documentosUnicos: DocumentoEnviado[] = []
+    const nomes = new Set<string>()
+  
+    for (const doc of (documentosData as any[]) || []) {
+      const relacao = doc.documentos_exigidos
+  
+      if (!relacao) continue
+  
+      const nome = Array.isArray(relacao)
+        ? relacao[0]?.nome
+        : relacao?.nome
+  
+      if (!nome) continue
+  
+      if (!nomes.has(nome)) {
+        nomes.add(nome)
+  
+        documentosUnicos.push({
+          ...doc,
+          documentos_exigidos: {
+            nome,
+          },
+        })
       }
-      
-      setDocumentos(documentosUnicos)
-    if (agendamentoData?.semanas_avaliacao) setSemana(agendamentoData.semanas_avaliacao as any)
+    }
+  
+    setDocumentos(documentosUnicos)
+  
+    if (agendamentoData?.semanas_avaliacao) {
+      setSemana(agendamentoData.semanas_avaliacao as any)
+    }
+  
     setCarregando(false)
   }
 
@@ -170,20 +198,17 @@ function FichaAtletaConteudo() {
           </button>
 
           <Card>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 28 }}>
-              <h1 style={{ fontFamily: 'var(--fonte-titulo)', fontSize: 26, color: 'var(--branco)' }}>{atleta.nome}</h1>
-              <span
-                style={{
-                  padding: '6px 14px',
-                  borderRadius: 12,
-                  fontSize: 14,
-                  background: atleta.status_triagem === 'apto' ? 'rgba(22,163,74,0.15)' : 'rgba(220,38,38,0.15)',
-                  color: atleta.status_triagem === 'apto' ? '#4ade80' : '#f87171',
-                }}
-              >
-                {atleta.status_triagem === 'apto' ? 'Apto' : 'Pendente'}
-              </span>
-            </div>
+  <div style={{ marginBottom: 28 }}>
+    <h1
+      style={{
+        fontFamily: 'var(--fonte-titulo)',
+        fontSize: 26,
+        color: 'var(--branco)'
+      }}
+    >
+      {atleta.nome}
+    </h1>
+  </div>
 
             <Secao titulo="Dados Pessoais">
               <Campo label="Data de nascimento" valor={formatarData(atleta.data_nascimento)} />
@@ -258,7 +283,7 @@ function FichaAtletaConteudo() {
                     }}
                   >
                     <div>
-                      <p style={{ fontWeight: 600, color: 'var(--branco)' }}>{doc.documentos_exigidos[0]?.nome}</p>
+                      <p style={{ fontWeight: 600, color: 'var(--branco)' }}>{doc.documentos_exigidos?.nome}</p>
                       {doc.data_validade && (
                         <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.5)' }}>Emitido em: {formatarData(doc.data_validade)}</p>
                       )}

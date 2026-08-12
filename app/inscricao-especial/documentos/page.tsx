@@ -130,13 +130,6 @@ export default function Documentos() {
     setEnviando(true)
     const atletaId = sessionStorage.getItem('atleta_id')!
 
-    const motivosPendencia: string[] = []
-    for (const doc of documentos) {
-      const resultado = verificarDocumento(doc)
-      if (!resultado.valido && resultado.motivo) motivosPendencia.push(resultado.motivo)
-    }
-    const statusFinal = motivosPendencia.length === 0 ? 'apto' : 'pendente'
-
     for (const doc of documentos) {
       const file = arquivos[doc.id]!
       const caminho = `${atletaId}/${doc.id}-${file.name}`
@@ -169,19 +162,6 @@ export default function Documentos() {
       }
     }
 
-    const { error: erroUpdate } = await supabase
-      .from('atletas')
-      .update({
-        status_triagem: statusFinal,
-        pendencias: motivosPendencia.length > 0 ? motivosPendencia.join(' | ') : null,
-      })
-      .eq('id', atletaId)
-
-    if (erroUpdate) {
-      setErro(`Erro ao finalizar triagem: ${erroUpdate.message}`)
-      setEnviando(false)
-      return
-    }
 
     setEnviando(false)
     router.push('/inscricao-especial/concluido')

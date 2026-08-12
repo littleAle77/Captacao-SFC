@@ -14,12 +14,12 @@ type Atleta = {
   telefone: string
   data_nascimento: string
   posicao: string
-  status_triagem: string
   pendencias: string | null
 }
 
 type Semana = { id: string; data_inicio: string; data_fim: string }
 type Agendamento = { atleta_id: string; semana_avaliacao_id: string }
+type DocumentoEnviado = {atleta_id: string}
 
 function AdminConteudo() {
   const router = useRouter()
@@ -27,6 +27,7 @@ function AdminConteudo() {
   const [atletas, setAtletas] = useState<Atleta[]>([])
   const [semanas, setSemanas] = useState<Semana[]>([])
   const [agendamentos, setAgendamentos] = useState<Agendamento[]>([])
+  const [documentosEnviados, setDocumentosEnviados] = useState<DocumentoEnviado[]>([])
   const [carregando, setCarregando] = useState(true)
 
   const [filtroNome, setFiltroNome] = useState('')
@@ -38,15 +39,22 @@ function AdminConteudo() {
 
   async function carregarDados() {
     setCarregando(true)
+  
     const { data: atletasData } = await supabase
-    .from('atletas')
-    .select('*')
-    .order('criado_em', { ascending: false })
-    .eq('tipo_inscricao', 'padrao')
-    .not('status_triagem', 'is', null)
-    const { data: semanasData } = await supabase.from('semanas_avaliacao').select('*').order('data_inicio', { ascending: true })
-    const { data: agendamentosData } = await supabase.from('agendamentos').select('atleta_id, semana_avaliacao_id')
-
+      .from('atletas')
+      .select('*')
+      .order('criado_em', { ascending: false })
+      .eq('tipo_inscricao', 'padrao')
+  
+    const { data: semanasData } = await supabase
+      .from('semanas_avaliacao')
+      .select('*')
+      .order('data_inicio', { ascending: true })
+  
+    const { data: agendamentosData } = await supabase
+      .from('agendamentos')
+      .select('atleta_id, semana_avaliacao_id')
+  
     setAtletas(atletasData || [])
     setSemanas(semanasData || [])
     setAgendamentos(agendamentosData || [])
@@ -178,7 +186,6 @@ function AdminConteudo() {
                 <th style={{ padding: 12, color: 'rgba(255,255,255,0.5)', fontSize: 13 }}>Nome</th>
                 <th style={{ padding: 12, color: 'rgba(255,255,255,0.5)', fontSize: 13 }}>Categoria</th>
                 <th style={{ padding: 12, color: 'rgba(255,255,255,0.5)', fontSize: 13 }}>Posição</th>
-                <th style={{ padding: 12, color: 'rgba(255,255,255,0.5)', fontSize: 13 }}>Status</th>
                 <th style={{padding: 12,  color: 'rgba(255,255,255,0.5)',fontSize: 13}}>Avaliado</th>
                 <th style={{ padding: 12, color: 'rgba(255,255,255,0.5)', fontSize: 13 }}>Data do agendamento</th>
               </tr>
@@ -196,19 +203,6 @@ function AdminConteudo() {
                     <td style={{ padding: 12, color: 'var(--branco)' }}>{atleta.nome}</td>
                     <td style={{ padding: 12, color: 'rgba(255,255,255,0.8)' }}>Sub-{categoria}</td>
                     <td style={{ padding: 12, color: 'rgba(255,255,255,0.8)' }}>{atleta.posicao}</td>
-                    <td style={{ padding: 12 }}>
-                      <span
-                        style={{
-                          padding: '4px 10px',
-                          borderRadius: 12,
-                          fontSize: 13,
-                          background: atleta.status_triagem === 'apto' ? 'rgba(22,163,74,0.15)' : 'rgba(220,38,38,0.15)',
-                          color: atleta.status_triagem === 'apto' ? '#4ade80' : '#f87171',
-                        }}
-                      >
-                        {atleta.status_triagem === 'apto' ? 'Apto' : 'Pendente'}
-                      </span>
-                    </td>
                     <td style={{ padding: 12 }}><button onClick={(e) =>alternarAvaliado(e, atleta.id, atleta.avaliado)}
                         style={{
                         background: atleta.avaliado ? '#16a34a' : '#dc2626',

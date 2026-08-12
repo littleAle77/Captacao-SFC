@@ -138,13 +138,6 @@ export default function Documentos() {
     setEnviando(true)
     const atletaId = sessionStorage.getItem('atleta_id')!
 
-    const motivosPendencia: string[] = []
-    for (const doc of documentos) {
-      const resultado = verificarDocumento(doc)
-      if (!resultado.valido && resultado.motivo) motivosPendencia.push(resultado.motivo)
-    }
-    const statusFinal = motivosPendencia.length === 0 ? 'apto' : 'pendente'
-
     for (const doc of documentos) {
       const file = arquivos[doc.id]!
       const caminho = `${atletaId}/${doc.id}-${file.name}`
@@ -175,25 +168,6 @@ export default function Documentos() {
         setEnviando(false)
         return
       }
-    }
-
-    const { error: erroUpdate } = await supabase
-      .from('atletas')
-      .update({
-        status_triagem: statusFinal,
-        pendencias: motivosPendencia.length > 0 ? motivosPendencia.join(' | ') : null,
-      })
-      .eq('id', atletaId)
-
-    if (erroUpdate) {
-      setErro(`Erro ao finalizar triagem: ${erroUpdate.message}`)
-      setEnviando(false)
-      return
-    }
-
-    if (statusFinal === 'apto') {
-      const resultado = await agendarProximaSemana(atletaId)
-      if (!resultado.sucesso) console.warn('Não foi possível agendar automaticamente:', resultado.motivo)
     }
 
     setEnviando(false)

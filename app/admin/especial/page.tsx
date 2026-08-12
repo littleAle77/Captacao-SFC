@@ -13,7 +13,6 @@ type Atleta = {
   telefone: string
   data_nascimento: string
   posicao: string
-  status_triagem: string
 }
 
 function AdminEspecialConteudo() {
@@ -27,9 +26,8 @@ function AdminEspecialConteudo() {
   async function carregar() {
     const { data } = await supabase
       .from('atletas')
-      .select('id, nome, telefone, data_nascimento, posicao, status_triagem')
+      .select('id, nome, telefone, data_nascimento, posicao')
       .eq('tipo_inscricao', 'especial')
-      .not('status_triagem', 'is', null)
       .order('criado_em', { ascending: false })
     setAtletas(data || [])
     setCarregando(false)
@@ -57,7 +55,7 @@ function AdminEspecialConteudo() {
       <Cabecalho />
       <PageContainer width="wide">
         <h1 style={{ fontFamily: 'var(--fonte-titulo)', fontSize: 28, color: 'var(--branco)', marginBottom: 24 }}>
-          Inscrições Especiais
+          AVALIAÇÃO COM O GRUPO
         </h1>
 
         <input
@@ -78,7 +76,6 @@ function AdminEspecialConteudo() {
                 <th style={{ padding: 12, color: 'rgba(255,255,255,0.5)', fontSize: 13 }}>Nome</th>
                 <th style={{ padding: 12, color: 'rgba(255,255,255,0.5)', fontSize: 13 }}>Categoria</th>
                 <th style={{ padding: 12, color: 'rgba(255,255,255,0.5)', fontSize: 13 }}>Posição</th>
-                <th style={{ padding: 12, color: 'rgba(255,255,255,0.5)', fontSize: 13 }}>Status</th>
               </tr>
             </thead>
             <tbody>
@@ -91,19 +88,6 @@ function AdminEspecialConteudo() {
                   <td style={{ padding: 12, color: 'var(--branco)' }}>{a.nome}</td>
                   <td style={{ padding: 12, color: 'rgba(255,255,255,0.8)' }}>Sub-{calcularCategoria(a.data_nascimento)}</td>
                   <td style={{ padding: 12, color: 'rgba(255,255,255,0.8)' }}>{a.posicao}</td>
-                  <td style={{ padding: 12 }}>
-                    <span
-                      style={{
-                        padding: '4px 10px',
-                        borderRadius: 12,
-                        fontSize: 13,
-                        background: a.status_triagem === 'apto' ? 'rgba(22,163,74,0.15)' : 'rgba(220,38,38,0.15)',
-                        color: a.status_triagem === 'apto' ? '#4ade80' : '#f87171',
-                      }}
-                    >
-                      {a.status_triagem === 'apto' ? 'Apto' : 'Pendente'}
-                    </span>
-                  </td>
                 </tr>
               ))}
             </tbody>

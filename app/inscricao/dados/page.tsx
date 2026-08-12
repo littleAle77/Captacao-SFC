@@ -80,15 +80,26 @@ export default function Dados() {
     setCarregando(true)
     setErro('')
 
-    // Verifica se já existe uma inscrição com o mesmo nome nos últimos 6 meses
+    // Verifica se já existe uma inscrição para o mesmo atleta nos últimos 6 meses.
+    // Compara por telefone + data de nascimento (par confiável, resistente a nomes alterados)
+    // e também por nome normalizado (ignorando acentos, espaços extras e maiúsculas/minúsculas).
     const seisMesesAtras = new Date()
     seisMesesAtras.setMonth(seisMesesAtras.getMonth() - 6)
 
-    const { data: duplicados, error: erroBusca } = await supabase
+    const dataNascimento = sessionStorage.getItem('data_nascimento')
+
+    const normalizar = (s: string) =>
+      s
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .trim()
+        .replace(/\s+/g, ' ')
+        .toLowerCase()
+
+    const { data: candidatos, error: erroBusca } = await supabase
       .from('atletas')
-      .select('id, criado_em')
+      .select('id, nome, telefone, data_nascimento, criado_em')
       .eq('tipo_inscricao', 'padrao')
-      .ilike('nome', nome.trim())
       .gte('criado_em', seisMesesAtras.toISOString())
 
     if (erroBusca) {
@@ -97,13 +108,18 @@ export default function Dados() {
       return
     }
 
-    if (duplicados && duplicados.length > 0) {
+    const nomeNormalizado = normalizar(nome)
+    const duplicado = candidatos?.find(
+      (c) =>
+        (c.telefone === telefone && c.data_nascimento === dataNascimento) ||
+        normalizar(c.nome) === nomeNormalizado
+    )
+
+    if (duplicado) {
       setCarregando(false)
-      setErro('Já existe uma inscrição com este nome nos últimos 6 meses. Entre em contato com o clube caso isso seja um engano.')
+      setErro('Já existe uma inscrição com esses dados nos últimos 6 meses. Entre em contato com o clube caso isso seja um engano.')
       return
     }
-
-    const dataNascimento = sessionStorage.getItem('data_nascimento')
 
     const { data, error } = await supabase
       .from('atletas')
