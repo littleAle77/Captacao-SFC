@@ -8,7 +8,7 @@ import PageContainer from '../components/ui/PageContainer'
 import Card from '../components/ui/Card'
 import Button from '../components/ui/Button'
 
-type ChaveRow = { id: string; chave: string; ativa: boolean; criado_em: string }
+type ChaveRow = { id: string; chave: string; ativa: boolean; criado_em: string; destino: string}
 
 function GerenciarChaveConteudo() {
   const [chaves, setChaves] = useState<ChaveRow[]>([])
@@ -16,7 +16,7 @@ function GerenciarChaveConteudo() {
   const [carregando, setCarregando] = useState(true)
   const [salvando, setSalvando] = useState(false)
   const [erro, setErro] = useState('')
-  const [novoDestino, setNovoDestino] = useState('padrao')
+  const [novoDestino, setNovoDestino] = useState('seletiva')
 
   useEffect(() => { carregar() }, [])
 
@@ -69,6 +69,18 @@ function GerenciarChaveConteudo() {
               chave ativa ao mesmo tempo (período de transição) e desativar a antiga quando quiser.
             </p>
 
+            <label className="field-label">Criar chave de acesso para:</label>
+
+              <select
+                value={novoDestino}
+                onChange={(e) => setNovoDestino(e.target.value)}
+                className="field"
+              >
+                <option value="seletiva">Seletiva</option>
+                <option value="mercado">Mercado</option>
+                <option value="especial">Especial</option>
+              </select>
+
             <label className="field-label">Criar nova chave</label>
             <input
               type="text"
@@ -111,8 +123,25 @@ function GerenciarChaveConteudo() {
                   }}
                 >
                   <div>
-                    <p style={{ color: 'var(--branco)', fontWeight: 600 }}>{c.chave}</p>
-                    <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: 12 }}>Criada em {formatarData(c.criado_em)}</p>
+                  <p style={{ color: 'var(--branco)', fontWeight: 600 }}>
+                    {c.chave}
+                  </p>
+
+                  <p style={{ color: 'var(--dourado-claro)', fontSize: 12, fontWeight: 600 }}>
+                    Destino: {
+                      c.destino === 'seletiva'
+                        ? 'Seletiva'
+                        : c.destino === 'mercado'
+                          ? 'Mercado'
+                          : c.destino === 'especial'
+                            ? 'Especial'
+                            : c.destino
+                    }
+                  </p>
+
+                  <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: 12 }}>
+                    Criada em {formatarData(c.criado_em)}
+                  </p>
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                     <span

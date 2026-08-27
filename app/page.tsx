@@ -10,6 +10,7 @@ import Cabecalho from './components/Cabecalho'
 import {
   Trophy,
   Video,
+  FileText,
 } from 'lucide-react'
 
 export default function Home() {
@@ -64,6 +65,32 @@ export default function Home() {
           </div>
 
         </Card>
+
+        <Card hover>
+
+        <div className={styles.cardContent}>
+
+          <FileText
+            size={56}
+            className={styles.icon}
+          />
+
+          <h2 className={styles.cardTitle}>
+            Inscrição para Avaliação com o Grupo 
+          </h2>
+
+          <p className={styles.cardText}>
+            Destinado aos atletas indicados a 
+            realizar avaliação com o grupo.
+          </p>
+
+          <Button href="/inscricao-especial">
+            ACESSAR
+          </Button>
+
+          </div>
+
+          </Card>
 
         <Card hover>
 
