@@ -58,7 +58,7 @@ export default function ConcluidoEspecial() {
                   </h1>
                   <p style={{ color: 'rgba(255,255,255,0.6)' }}>
                     Seus documentos foram validados com sucesso. O clube entrará em contato
-                    diretamente com você para os próximos passos.
+                    diretamente com você para 
                   </p>
                 </>
               ) : (

@@ -44,7 +44,7 @@ export default function InscricaoEspecial() {
       chave.trim()
     )
 
-    router.push('/inscricao-especial/nascimento')
+    router.push('/inscricao/nascimento')
   }
 
   return (

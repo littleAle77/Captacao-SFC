@@ -13,7 +13,6 @@ function InscricaoConteudo() {
   const [dataNascimento, setDataNascimento] = useState('')
   const [erro, setErro] = useState('')
   const [sugerirMercado, setSugerirMercado] = useState(false)
-  const [verificando, setVerificando] = useState(false)
 
   const [chave, setChave] = useState('')
   const [pedindoChave, setPedindoChave] = useState(false)
@@ -46,54 +45,7 @@ function InscricaoConteudo() {
     return idade
   }
 
-  async function existeVagaParaCategoria(
-    categoria: number
-  ): Promise<boolean> {
-
-    const hoje = new Date().toISOString().split('T')[0]
-
-    const { data: semanas, error: erroSemanas } = await supabase
-      .from('semanas_avaliacao')
-      .select('*')
-      .lte('categoria_min', categoria)
-      .gte('categoria_max', categoria)
-      .gte('data_inicio', hoje)
-      .order('data_inicio', { ascending: true })
-
-    if (
-      erroSemanas ||
-      !semanas ||
-      semanas.length === 0
-    ) {
-      return false
-    }
-
-    for (const semana of semanas) {
-
-      const { count } = await supabase
-        .from('agendamentos')
-        .select('*', {
-          count: 'exact',
-          head: true,
-        })
-        .eq(
-          'semana_avaliacao_id',
-          semana.id
-        )
-
-      if (
-        (count || 0) <
-        semana.vagas_totais
-      ) {
-        return true
-      }
-    }
-
-    return false
-  }
-
   async function validarChaveSeletiva() {
-
     if (!chave.trim()) {
       setErroChave(
         'Digite a chave de acesso.'
@@ -140,8 +92,7 @@ function InscricaoConteudo() {
     }
   }
 
-  async function continuar() {
-
+  function continuar() {
     if (!dataNascimento) {
       setErro(
         'Por favor, informe a data de nascimento.'
@@ -162,7 +113,6 @@ function InscricaoConteudo() {
     }
 
     if (categoria > 16) {
-
       setErro(
         'Avaliamos presencialmente apenas atletas das categorias Sub-7 a Sub-16. ' +
         'Para a sua categoria, o caminho indicado é o envio de material para a Análise de Mercado.'
@@ -175,27 +125,6 @@ function InscricaoConteudo() {
 
     setErro('')
     setSugerirMercado(false)
-    setVerificando(true)
-
-    const temVaga =
-      await existeVagaParaCategoria(
-        categoria
-      )
-
-    setVerificando(false)
-
-    if (!temVaga) {
-
-      setErro(
-        `No momento não há datas disponíveis para a categoria Sub-${categoria}. ` +
-        'Todas as vagas para essa categoria já foram preenchidas nas próximas semanas de avaliação. ' +
-        'Por favor, tente novamente mais tarde, quando novas datas forem abertas.'
-      )
-
-      return
-    }
-
-    setErro('')
     setPedindoChave(true)
   }
 
@@ -292,11 +221,8 @@ function InscricaoConteudo() {
                     ? 'outline'
                     : 'primary'
                 }
-                disabled={verificando}
               >
-                {verificando
-                  ? 'VERIFICANDO DISPONIBILIDADE...'
-                  : 'CONTINUAR'}
+                CONTINUAR
               </Button>
             )}
 

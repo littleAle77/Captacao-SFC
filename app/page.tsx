@@ -38,6 +38,7 @@ export default function Home() {
 
       </section>
 
+    
       <section className={styles.cards}>
 
         <Card hover>
@@ -50,12 +51,12 @@ export default function Home() {
             />
 
             <h2 className={styles.cardTitle}>
-              Participar da Seletiva
+              Inscrição para Avaliação
             </h2>
 
             <p className={styles.cardText}>
-              Processo destinado aos atletas que estão
-              dentro da faixa etária das seletivas abertas.
+              Faça sua inscrição para avaliação pelo
+              Departamento de Captação.
             </p>
 
             <Button href="/inscricao">
@@ -66,59 +67,8 @@ export default function Home() {
 
         </Card>
 
-        <Card hover>
-
-        <div className={styles.cardContent}>
-
-          <FileText
-            size={56}
-            className={styles.icon}
-          />
-
-          <h2 className={styles.cardTitle}>
-            Inscrição para Avaliação com o Grupo 
-          </h2>
-
-          <p className={styles.cardText}>
-            Destinado aos atletas indicados a 
-            realizar avaliação com o grupo.
-          </p>
-
-          <Button href="/inscricao-especial">
-            ACESSAR
-          </Button>
-
-          </div>
-
-          </Card>
-
-        <Card hover>
-
-          <div className={styles.cardContent}>
-
-            <Video
-              size={56}
-              className={styles.icon}
-            />
-
-            <h2 className={styles.cardTitle}>
-              Análise de Mercado
-            </h2>
-
-            <p className={styles.cardText}>
-              Envie o vídeo do atleta para avaliação
-              da equipe de captação do clube.
-            </p>
-
-            <Button href="/mercado">
-              ENVIAR MATERIAL
-            </Button>
-
-          </div>
-
-        </Card>
-
       </section>
+
 
       <section className={styles.info}>
 

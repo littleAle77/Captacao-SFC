@@ -8,13 +8,6 @@ import PageContainer from '../../components/ui/PageContainer'
 import Card from '../../components/ui/Card'
 import Button from '../../components/ui/Button'
 
-type Documento = {
-  id: string
-  nome: string
-  tem_validade: boolean
-  dias_validade: number | null
-  somente_menor: boolean
-}
 
 const POSICOES = [
   'Goleiro', 'Lateral esquerdo', 'Lateral direito', 'Zagueiro',
@@ -42,29 +35,16 @@ export default function Dados() {
 
   const [erro, setErro] = useState('')
   const [carregando, setCarregando] = useState(false)
-  const [documentos, setDocumentos] = useState<Documento[]>([])
 
   useEffect(() => {
     const dataNascimento = sessionStorage.getItem('data_nascimento')
+  
     if (!dataNascimento) {
       router.push('/inscricao/nascimento')
       return
     }
-    const nascimento = new Date(dataNascimento)
-    const hoje = new Date()
-    let idade = hoje.getFullYear() - nascimento.getFullYear()
-    const mes = hoje.getMonth() - nascimento.getMonth()
-    if (mes < 0 || (mes === 0 && hoje.getDate() < nascimento.getDate())) idade--
-    buscarDocumentos(idade < 18)
   }, [])
 
-  async function buscarDocumentos(menor: boolean) {
-    let query = supabase.from('documentos_exigidos').select('*')
-    if (!menor) query = query.eq('somente_menor', false)
-    const { data, error } = await query
-    if (error) { setErro('Erro ao carregar a lista de documentos.'); return }
-    setDocumentos(data || [])
-  }
 
   async function continuar() {
     if (
@@ -148,7 +128,7 @@ export default function Dados() {
     }
 
     sessionStorage.setItem('atleta_id', data.id)
-    router.push('/inscricao/documentos')
+    router.push('/inscricao/concluido')
   }
 
   const tituloSecao = {
@@ -234,17 +214,7 @@ export default function Dados() {
             <label className="field-label">Estado atual *</label>
             <input className="field" type="text" value={estadoAtual} onChange={(e) => setEstadoAtual(e.target.value)} />
 
-            {documentos.length > 0 && (
-              <div style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)', padding: 16, borderRadius: 10, marginBottom: 20, marginTop: 12 }}>
-                <p style={{ fontFamily: 'var(--fonte-titulo)', color: 'var(--dourado-claro)', fontWeight: 700, marginBottom: 8, letterSpacing: '0.03em', fontSize: 13 }}>
-                  DOCUMENTOS NECESSÁRIOS NA PRÓXIMA ETAPA
-                </p>
-                <ul style={{ paddingLeft: 20, color: 'rgba(255,255,255,0.75)' }}>
-                  {documentos.map((doc) => <li key={doc.id} style={{ marginBottom: 4 }}>{doc.nome}</li>)}
-                </ul>
-              </div>
-            )}
-
+          
             {erro && <p style={{ color: '#f87171', marginBottom: 16, fontSize: 14 }}>{erro}</p>}
 
             <Button onClick={continuar} disabled={carregando}>

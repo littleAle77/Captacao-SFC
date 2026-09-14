@@ -87,46 +87,6 @@ export default function Documentos() {
     return { valido: true }
   }
 
-  async function agendarProximaSemana(atletaId: string) {
-    const dataNascimento = sessionStorage.getItem('data_nascimento')!
-    const anoNascimento = new Date(dataNascimento).getFullYear()
-    const anoAtual = new Date().getFullYear()
-    const categoria = anoAtual - anoNascimento
-
-    const hoje = new Date().toISOString().split('T')[0]
-
-    const { data: semanas, error: erroSemanas } = await supabase
-      .from('semanas_avaliacao')
-      .select('*')
-      .lte('categoria_min', categoria)
-      .gte('categoria_max', categoria)
-      .gte('data_inicio', hoje)
-      .order('data_inicio', { ascending: true })
-
-    if (erroSemanas || !semanas || semanas.length === 0) {
-      return { sucesso: false, motivo: `Nenhuma semana de avaliação disponível para a categoria Sub-${categoria}.` }
-    }
-
-    for (const semana of semanas) {
-      const { count } = await supabase
-        .from('agendamentos')
-        .select('*', { count: 'exact', head: true })
-        .eq('semana_avaliacao_id', semana.id)
-
-      if ((count || 0) < semana.vagas_totais) {
-        const { error: erroAgendamento } = await supabase.from('agendamentos').insert({
-          atleta_id: atletaId,
-          semana_avaliacao_id: semana.id,
-          data: semana.data_inicio,
-          status: 'confirmado',
-        })
-        if (erroAgendamento) return { sucesso: false, motivo: erroAgendamento.message }
-        return { sucesso: true, semana }
-      }
-    }
-    return { sucesso: false, motivo: 'Todas as semanas disponíveis estão lotadas.' }
-  }
-
   async function enviarTudo() {
     setErro('')
 
