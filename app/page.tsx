@@ -1,7 +1,7 @@
 'use client'
 
+import { useEffect, useState } from 'react'
 import styles from './page.module.css'
-
 import PageContainer from './components/ui/PageContainer'
 import Card from './components/ui/Card'
 import Button from './components/ui/Button'
@@ -14,6 +14,24 @@ import {
 } from 'lucide-react'
 
 export default function Home() {
+  const [temAcessoMercado, setTemAcessoMercado] = useState(false)
+
+  useEffect(() => {
+    const areas = localStorage.getItem('sessao_areas')
+
+    if (!areas) return
+
+    try {
+      const areasUsuario = JSON.parse(areas)
+
+      if (areasUsuario.includes('mercado')) {
+        setTemAcessoMercado(true)
+      }
+    } catch {
+      setTemAcessoMercado(false)
+    }
+  }, [])
+
   return (
     <>
       <Cabecalho />
@@ -68,7 +86,34 @@ export default function Home() {
         </Card>
 
       </section>
+      
+            {temAcessoMercado && (
+        <Card hover>
 
+          <div className={styles.cardContent}>
+
+            <Video
+              size={56}
+              className={styles.icon}
+            />
+
+            <h2 className={styles.cardTitle}>
+              Análise de Mercado
+            </h2>
+
+            <p className={styles.cardText}>
+              Envie o vídeo do atleta para avaliação
+              da equipe de captação do clube.
+            </p>
+
+            <Button href="/mercado">
+              ENVIAR MATERIAL
+            </Button>
+
+          </div>
+
+        </Card>
+      )}
 
       <section className={styles.info}>
 

@@ -24,25 +24,39 @@ export default function ProtegerSeletiva({
   useEffect(() => {
     async function verificar() {
       const chaveSalva = sessionStorage.getItem('chave_seletiva')
+const acessoLiberadoEm = sessionStorage.getItem('acesso_liberado_em')
 
-      if (!chaveSalva) {
-        setVerificando(false)
-        return
-      }
+if (!chaveSalva || !acessoLiberadoEm) {
+  setVerificando(false)
+  return
+}
 
-      const { data } = await supabase
-        .from('chave_acesso_geral')
-        .select('id, destino')
-        .eq('chave', chaveSalva)
-        .eq('destino', 'seletiva')
-        .eq('ativa', true)
-        .maybeSingle()
+const inicio = Number(acessoLiberadoEm)
+const agora = Date.now()
 
-      if (data) {
-        setAutorizado(true)
-      } else {
-        sessionStorage.removeItem('chave_seletiva')
-      }
+const dozeHoras = 12 * 60 * 60 * 1000
+
+if (agora - inicio >= dozeHoras) {
+  sessionStorage.removeItem('chave_seletiva')
+  sessionStorage.removeItem('acesso_liberado_em')
+  setVerificando(false)
+  return
+}
+
+const { data } = await supabase
+  .from('chave_acesso_geral')
+  .select('id, destino')
+  .eq('chave', chaveSalva)
+  .eq('destino', 'seletiva')
+  .eq('ativa', true)
+  .maybeSingle()
+
+if (data) {
+  setAutorizado(true)
+} else {
+  sessionStorage.removeItem('chave_seletiva')
+  sessionStorage.removeItem('acesso_liberado_em')
+}
 
       setVerificando(false)
     }
@@ -74,7 +88,16 @@ export default function ProtegerSeletiva({
       return
     }
 
-    sessionStorage.setItem('chave_seletiva', chave.trim())
+    sessionStorage.setItem(
+      'chave_seletiva',
+      chave.trim()
+    )
+    
+    sessionStorage.setItem(
+      'acesso_liberado_em',
+      String(Date.now())
+    )
+    
     setAutorizado(true)
   }
 

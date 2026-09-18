@@ -55,11 +55,12 @@ export default function Cabecalho() {
       <nav style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
         {areas.length > 0 ? (
           <>
-            {areas.includes('seletiva') && <Link href="/admin" style={linkStyle}>PAINEL SELETIVA</Link>}
-            {areas.includes('mercado') && <Link href="/admin/mercado" style={linkStyle}>PAINEL MERCADO</Link>}
-            {areas.includes('chaves') && <Link href="/gerenciar-chave" style={linkStyle}>CHAVES DE ACESSO</Link>}
+            {areas.includes('seletiva') && <Link href="/admin" style={linkStyle}>ATLETAS CADASTRADOS</Link>}
+            {areas.includes('mercado') && <Link href="/admin/mercado" style={linkStyle}>ANÁLISE DE MERCADO</Link>}
             {areas.includes('especial') && <Link href="/admin/especial" style={linkStyle}>AVALIAÇÃO C/ GRUPO</Link>}
-            <Link href="/trocar-senha" style={linkStyle}>TROCAR SENHA</Link>
+            {areas.includes('chaves') && <Link href="/gerenciar-chave" style={linkStyle}>CHAVES DE ACESSO</Link>}
+           
+            <Link href="/trocar-senha" style={linkStyle}>SENHAS</Link>
             <button
               onClick={sair}
               style={{ ...linkStyle, background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
@@ -67,7 +68,7 @@ export default function Cabecalho() {
               SAIR
             </button>
           </>
-        ) : (
+          ) : (
           <Link href="/entrar" style={{ ...linkStyle, opacity: 0.5, fontSize: 12 }}>
             ÁREA DO ADMINISTRADOR
           </Link>
